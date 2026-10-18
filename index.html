@@ -4,85 +4,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mini Tools World</title>
+<meta name="theme-color" content="#0b1020">
+<title>Mini Tools World — Your Smart Workspace</title>
 <style>
+:root{--bg:#090d19;--panel:#121a2c;--line:#26324b;--muted:#9caac3;--purple:#8b5cf6;--blue:#38bdf8}
 *{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
-header{text-align:center;padding:38px 16px;background:linear-gradient(135deg,#5125b5,#087fbe)}
-header h1{margin:0 0 10px;font-size:32px}
-header p{margin:0}
-main{max-width:900px;margin:auto;padding:22px 14px}
-.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
-.card{background:#171f35;border:1px solid #303b57;border-radius:16px;padding:18px}
-h2{font-size:20px}
-input,textarea,button{width:100%;padding:12px;margin:7px 0;border-radius:9px;font-size:16px}
-input,textarea{background:#0b1020;border:1px solid #46516d;color:white}
-button{background:#7546ed;color:white;border:0;font-weight:bold;cursor:pointer}
-.result{color:#9fe8ff;overflow-wrap:anywhere}
-footer{text-align:center;padding:24px;color:#b9c3d8}
+body{margin:0;background:var(--bg);color:#f6f7ff;font-family:Arial,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+header{padding:15px 20px;border-bottom:1px solid var(--line);background:#0c1222}
+.nav{max-width:1120px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.brand span{color:#a78bfa}
+.navlinks{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{padding:10px 15px;border-radius:10px;border:1px solid var(--line);background:#18233a;color:white}
+.btn.primary{background:linear-gradient(120deg,#7c3aed,#3978ed);border:0;font-weight:700}
+.btn:hover{filter:brightness(1.15)}
+main{max-width:1120px;margin:auto;padding:24px 18px 55px}
+.hero{position:relative;overflow:hidden;border:1px solid #34315d;border-radius:25px;padding:35px 25px;background:radial-gradient(ellipse at 85% 5%,#433184 0,transparent 42%),linear-gradient(130deg,#17172f,#111d34 70%,#10283a)}
+.eyebrow{color:#c4b5fd;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(30px,6vw,48px);line-height:1.1;letter-spacing:-1.5px;margin:14px 0}
+.hero p{color:#c0cbe0;line-height:1.7;max-width:550px}
+.search{margin-top:22px;max-width:510px;display:flex;gap:8px}
+input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #34415e;background:#0b1222;color:white}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 32px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:16px}
+.stat strong{display:block;font-size:22px;margin-bottom:5px}
+.stat small{color:var(--muted)}
+.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:30px 0 16px}
+.sectionhead h2{margin:0;font-size:23px}
+.muted{color:var(--muted);font-size:13px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px}
+.card{background:linear-gradient(145deg,#151e32,#101727);border:1px solid var(--line);border-radius:18px;padding:20px;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:#6850b8}
+.toolicon{width:46px;height:46px;display:grid;place-items:center;border-radius:13px;background:#292448;font-size:23px}
+.card h3{margin:17px 0 8px}
+.card p{color:var(--muted);font-size:14px;line-height:1.6;min-height:44px}
+.card .btn{width:100%;margin-top:8px}
+.workspace{display:none;margin-top:20px}
+.workspace.active{display:block}
+.workspace .card{max-width:700px;margin:auto}
+.workspace h2{margin-top:0}
+.result{overflow-wrap:anywhere;color:#93e7ff;line-height:1.6}
+.fieldlabel{display:block;margin-top:12px;font-size:13px;color:#cbd5e1}
+.historyitem{padding:12px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.historyitem:last-child{border:0}
+footer{border-top:1px solid var(--line);text-align:center;padding:25px;color:var(--muted);font-size:13px}
+.overlay{display:none;position:fixed;inset:0;background:#030611d9;z-index:5;align-items:center;justify-content:center;padding:18px}
+.overlay.active{display:flex}
+.modal{width:100%;max-width:400px;background:#131c30;border:1px solid #34415e;border-radius:20px;padding:23px}
+.modal h2{margin-top:0}
+.modal input{margin:7px 0}
+.notice{font-size:13px;color:#c3cce0;line-height:1.6}
+.hidden{display:none!important}
+@media(max-width:520px){header{padding:13px}.brand{font-size:17px}.navlinks{gap:5px}.navlinks .btn{padding:8px;font-size:12px}main{padding:16px 12px 35px}.hero{padding:27px 18px}.stats{gap:7px}.stat{padding:12px 9px}.stat strong{font-size:18px}.stat small{font-size:11px}.search{flex-direction:column}}
 </style>
 </head>
 <body>
 <header>
-<h1>🛠️ Mini Tools World</h1>
-<p>Free online tools for your everyday needs.</p>
+  <div class="nav">
+    <div class="brand">⚡ Mini Tools <span>World</span></div>
+    <nav class="navlinks">
+      <button class="btn" onclick="showSection('home')">Home</button>
+      <button class="btn" onclick="showSection('history')">History</button>
+      <button class="btn" onclick="openAuth('login')">Login</button>
+      <button class="btn primary" onclick="openAuth('signup')">Sign Up</button>
+    </nav>
+  </div>
 </header>
+
 <main>
-<h2>Explore Our Free Tools</h2>
-<div class="tools">
-<section class="card">
-<h2>🔐 Password Generator</h2>
-<label for="length">Password length (8–32)</label>
-<input id="length" type="number" min="8" max="32" value="16">
-<button onclick="generate()">Generate Password</button>
-<p id="password" class="result">Your password will appear here.</p>
-<button onclick="copyPass()">Copy Password</button>
-<p id="copyStatus"></p>
-</section>
-<section class="card">
-<h2>🎂 Age Calculator</h2>
-<label for="dob">Date of birth</label>
-<input id="dob" type="date">
-<button onclick="age()">Calculate Age</button>
-<p id="ageResult" class="result"></p>
-</section>
-<section class="card">
-<h2>📝 Word Counter</h2>
-<textarea id="text" rows="5" placeholder="Type your text here..." oninput="count()"></textarea>
-<p id="countResult" class="result">Words: 0 | Characters: 0</p>
-</section>
-</div>
+  <section id="home">
+    <div class="hero">
+      <div class="eyebrow">✦ Your everyday digital workspace</div>
+      <h1>Small Tools.<br>Big Possibilities.</h1>
+      <p>Discover simple, fast and free tools designed to make your everyday tasks easier.</p>
+      <div class="search">
+        <input id="search" placeholder="🔎  Search your tools..." oninput="filterTools()">
+        <button class="btn primary" onclick="filterTools()">Search</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><strong>03</strong><small>Useful tools</small></div>
+      <div class="stat"><strong>100%</strong><small>Free to use</small></div>
+      <div class="stat"><strong>24/7</strong><small>Online access</small></div>
+    </div>
+
+    <div class="sectionhead">
+      <h2>Explore Tools</h2>
+      <span class="muted">Choose a tool to get started</span>
+    </div>
+
+    <div class="tools" id="toolGrid">
+      <article class="card" data-name="password generator security">
+        <div class="toolicon">🔐</div>
+        <h3>Password Generator</h3>
+        <p>Create a random password for your accounts.</p>
+        <button class="btn primary" onclick="openTool('password','Password Generator')">Open Tool →</button>
+      </article>
+      <article class="card" data-name="age calculator birthday date">
+        <div class="toolicon">🎂</div>
+        <h3>Age Calculator</h3>
+        <p>Calculate your age in years, months and days.</p>
+        <button class="btn primary" onclick="openTool('age','Age Calculator')">Open Tool →</button>
+      </article>
+      <article class="card" data-name="word counter text writing characters">
+        <div class="toolicon">📝</div>
+        <h3>Word Counter</h3>
+        <p>Count words and characters as you type.</p>
+        <button class="btn primary" onclick="openTool('words','Word Counter')">Open Tool →</button>
+      </article>
+    </div>
+  </section>
+
+  <section id="workspace" class="workspace">
+    <div class="card">
+      <button class="btn" onclick="showSection('home')">← Back to tools</button>
+      <div id="passwordTool" class="hidden">
+        <h2>🔐 Password Generator</h2>
+        <label class="fieldlabel" for="length">Password length (8–32)</label>
+        <input id="length" type="number" min="8" max="32" value="16">
+        <button class="btn primary" style="width:100%;margin-top:10px" onclick="generatePassword()">Generate Password</button>
+        <p id="passwordResult" class="result">Your password will appear here.</p>
+        <button class="btn" onclick="copyPassword()">Copy Password</button>
+        <p id="copyStatus" class="muted"></p>
+      </div>
+      <div id="ageTool" class="hidden">
+        <h2>🎂 Age Calculator</h2>
+        <label class="fieldlabel" for="dob">Date of birth</label>
+        <input id="dob" type="date">
+        <button class="btn primary" style="width:100%;margin-top:10px" onclick="calculateAge()">Calculate Age</button>
+        <p id="ageResult" class="result"></p>
+      </div>
+      <div id="wordsTool" class="hidden">
+        <h2>📝 Word Counter</h2>
+        <label class="fieldlabel" for="textInput">Your text</label>
+        <textarea id="textInput" rows="6" placeholder="Type or paste your text..." oninput="countText()"></textarea>
+        <p id="wordResult" class="result">Words: 0 | Characters: 0</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="history" class="hidden">
+    <div class="sectionhead">
+      <h2>Recent History</h2>
+      <button class="btn" onclick="clearHistory()">Clear History</button>
+    </div>
+    <div class="card" id="historyList"><p class="muted">No tools opened yet.</p></div>
+    <p class="muted">History is saved only in this browser on this device.</p>
+  </section>
 </main>
-<footer>© 2026 Mini Tools World · Free to use</footer>
+
+<div id="authOverlay" class="overlay" onclick="if(event.target===this)closeAuth()">
+  <div class="modal">
+    <button class="btn" style="float:right" onclick="closeAuth()">✕</button>
+    <h2 id="authTitle">Welcome back</h2>
+    <p class="notice">This is a preview of the account interface. Real account registration and secure login are not connected yet.</p>
+    <form onsubmit="event.preventDefault();document.getElementById('authMessage').textContent='Demo only: accounts are not enabled yet. No details were saved.'">
+      <label class="fieldlabel" for="authEmail">Email</label>
+      <input id="authEmail" type="email" placeholder="you@example.com" required>
+      <div id="passwordField">
+        <label class="fieldlabel" for="authPassword">Password</label>
+        <input id="authPassword" type="password" placeholder="Enter password" required>
+      </div>
+      <button class="btn primary" id="authSubmit" type="submit" style="width:100%;margin-top:12px">Login</button>
+    </form>
+    <p id="authMessage" class="notice"></p>
+    <button class="btn" id="authSwitch" style="width:100%" onclick="switchAuth()">Need an account? Sign Up</button>
+  </div>
+</div>
+
+<footer>© 2026 Mini Tools World · Simple tools for everyday life</footer>
+
 <script>
-function generate(){
-let n=Number(document.getElementById('length').value);
-if(!Number.isInteger(n)||n<8||n>32){alert('Choose a length from 8 to 32.');return}
-let chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
-let a=new Uint32Array(n);crypto.getRandomValues(a);
-document.getElementById('password').textContent=Array.from(a,x=>chars[x%chars.length]).join('');
-document.getElementById('copyStatus').textContent='';
+let currentAuth='login';
+
+function showSection(section){
+  document.getElementById('home').classList.toggle('hidden',section!=='home');
+  document.getElementById('history').classList.toggle('hidden',section!=='history');
+  document.getElementById('workspace').classList.remove('active');
+  if(section==='history')renderHistory();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-async function copyPass(){
-let p=document.getElementById('password').textContent;
-if(p==='Your password will appear here.'){alert('Generate a password first.');return}
-try{await navigator.clipboard.writeText(p);document.getElementById('copyStatus').textContent='Copied!'}
-catch(e){document.getElementById('copyStatus').textContent='Select the password and copy it manually.'}
+
+function openTool(id,name){
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('history').classList.add('hidden');
+  document.getElementById('workspace').classList.add('active');
+  ['passwordTool','ageTool','wordsTool'].forEach(x=>document.getElementById(x).classList.add('hidden'));
+  const target={password:'passwordTool',age:'ageTool',words:'wordsTool'}[id];
+  document.getElementById(target).classList.remove('hidden');
+  saveHistory(name);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-function age(){
-let v=document.getElementById('dob').value,r=document.getElementById('ageResult');
-if(!v){r.textContent='Please choose your birth date.';return}
-let b=new Date(v+'T00:00:00'),t=new Date();
-if(b>t){r.textContent='Date cannot be in the future.';return}
-let y=t.getFullYear()-b.getFullYear(),m=t.getMonth()-b.getMonth(),d=t.getDate()-b.getDate();
-if(d<0){m--;d+=new Date(t.getFullYear(),t.getMonth(),0).getDate()}
-if(m<0){y--;m+=12}
-r.textContent=`Age: ${y} years, ${m} months, ${d} days`;
+
+function filterTools(){
+  const query=document.getElementById('search').value.toLowerCase().trim();
+  document.querySelectorAll('#toolGrid .card').forEach(card=>{
+    card.style.display=card.dataset.name.includes(query)?'':'none';
+  });
 }
-function count(){
-let v=document.getElementById('text').value;
-document.getElementById('countResult').textContent='Words: '+(v.trim()?v.trim().split(/\s+/).length:0)+' | Characters: '+v.length;
+
+function saveHistory(name){
+  let list=[];
+  try{list=JSON.parse(localStorage.getItem('mtwHistory')||'[]')}catch(e){}
+  list.unshift({name:name,time:new Date().toLocaleString()});
+  localStorage.setItem('mtwHistory',JSON.stringify(list.slice(0,20)));
+}
+function renderHistory(){
+  let list=[];
+  try{list=JSON.parse(localStorage.getItem('mtwHistory')||'[]')}catch(e){}
+  const box=document.getElementById('historyList');
+  if(!list.length){box.innerHTML='<p class="muted">No tools opened yet. Open a tool to see it here.</p>';return}
+  box.innerHTML=list.map(item=>'<div class="historyitem"><strong>'+escapeHTML(item.name)+'</strong><span class="muted">'+escapeHTML(item.time)+'</span></div>').join('');
+}
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function clearHistory(){
+  localStorage.removeItem('mtwHistory');
+  renderHistory();
+}
+
+function generatePassword(){
+  const n=Number(document.getElementById('length').value);
+  if(!Number.isInteger(n)||n<8||n>32){alert('Choose a length between 8 and 32.');return}
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+  const bytes=new Uint32Array(n);
+  crypto.getRandomValues(bytes);
+  document.getElementById('passwordResult').textContent=Array.from(bytes,b=>chars[b%chars.length]).join('');
+  document.getElementById('copyStatus').textContent='';
+}
+async function copyPassword(){
+  const p=document.getElementById('passwordResult').textContent;
+  if(p==='Your password will appear here.'){alert('Generate a password first.');return}
+  try{
+    await navigator.clipboard.writeText(p);
+    document.getElementById('copyStatus').textContent='Password copied!';
+  }catch(e){
+    document.getElementById('copyStatus').textContent='Please select and copy the password manually.';
+  }
+}
+function calculateAge(){
+  const value=document.getElementById('dob').value;
+  const result=document.getElementById('ageResult');
+  if(!value){result.textContent='Please select your birth date.';return}
+  const b=new Date(value+'T00:00:00'),t=new Date();
+  if(b>t){result.textContent='Birth date cannot be in the future.';return}
+  let y=t.getFullYear()-b.getFullYear(),m=t.getMonth()-b.getMonth(),d=t.getDate()-b.getDate();
+  if(d<0){m--;d+=new Date(t.getFullYear(),t.getMonth(),0).getDate()}
+  if(m<0){y--;m+=12}
+  result.textContent=`Age: ${y} years, ${m} months, ${d} days`;
+}
+function countText(){
+  const v=document.getElementById('textInput').value;
+  document.getElementById('wordResult').textContent='Words: '+(v.trim()?v.trim().split(/\s+/u).length:0)+' | Characters: '+v.length;
+}
+function openAuth(mode){
+  currentAuth=mode;
+  updateAuth();
+  document.getElementById('authMessage').textContent='';
+  document.getElementById('authOverlay').classList.add('active');
+}
+function closeAuth(){document.getElementById('authOverlay').classList.remove('active')}
+function switchAuth(){currentAuth=currentAuth==='login'?'signup':'login';updateAuth();document.getElementById('authMessage').textContent=''}
+function updateAuth(){
+  const signup=currentAuth==='signup';
+  document.getElementById('authTitle').textContent=signup?'Create your account':'Welcome back';
+  document.getElementById('authSubmit').textContent=signup?'Create Account':'Login';
+  document.getElementById('authSwitch').textContent=signup?'Already have an account? Login':'Need an account? Sign Up';
 }
 </script>
 </body>
-</html>
+  </html>
