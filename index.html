@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini Tools World</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
+header{text-align:center;padding:38px 16px;background:linear-gradient(135deg,#5125b5,#087fbe)}
+header h1{margin:0 0 10px;font-size:32px}
+header p{margin:0}
+main{max-width:900px;margin:auto;padding:22px 14px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:#171f35;border:1px solid #303b57;border-radius:16px;padding:18px}
+h2{font-size:20px}
+input,textarea,button{width:100%;padding:12px;margin:7px 0;border-radius:9px;font-size:16px}
+input,textarea{background:#0b1020;border:1px solid #46516d;color:white}
+button{background:#7546ed;color:white;border:0;font-weight:bold;cursor:pointer}
+.result{color:#9fe8ff;overflow-wrap:anywhere}
+footer{text-align:center;padding:24px;color:#b9c3d8}
+</style>
+</head>
+<body>
+<header>
+<h1>🛠️ Mini Tools World</h1>
+<p>Free online tools for your everyday needs.</p>
+</header>
+<main>
+<h2>Explore Our Free Tools</h2>
+<div class="tools">
+<section class="card">
+<h2>🔐 Password Generator</h2>
+<label for="length">Password length (8–32)</label>
+<input id="length" type="number" min="8" max="32" value="16">
+<button onclick="generate()">Generate Password</button>
+<p id="password" class="result">Your password will appear here.</p>
+<button onclick="copyPass()">Copy Password</button>
+<p id="copyStatus"></p>
+</section>
+<section class="card">
+<h2>🎂 Age Calculator</h2>
+<label for="dob">Date of birth</label>
+<input id="dob" type="date">
+<button onclick="age()">Calculate Age</button>
+<p id="ageResult" class="result"></p>
+</section>
+<section class="card">
+<h2>📝 Word Counter</h2>
+<textarea id="text" rows="5" placeholder="Type your text here..." oninput="count()"></textarea>
+<p id="countResult" class="result">Words: 0 | Characters: 0</p>
+</section>
+</div>
+</main>
+<footer>© 2026 Mini Tools World · Free to use</footer>
+<script>
+function generate(){
+let n=Number(document.getElementById('length').value);
+if(!Number.isInteger(n)||n<8||n>32){alert('Choose a length from 8 to 32.');return}
+let chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+let a=new Uint32Array(n);crypto.getRandomValues(a);
+document.getElementById('password').textContent=Array.from(a,x=>chars[x%chars.length]).join('');
+document.getElementById('copyStatus').textContent='';
+}
+async function copyPass(){
+let p=document.getElementById('password').textContent;
+if(p==='Your password will appear here.'){alert('Generate a password first.');return}
+try{await navigator.clipboard.writeText(p);document.getElementById('copyStatus').textContent='Copied!'}
+catch(e){document.getElementById('copyStatus').textContent='Select the password and copy it manually.'}
+}
+function age(){
+let v=document.getElementById('dob').value,r=document.getElementById('ageResult');
+if(!v){r.textContent='Please choose your birth date.';return}
+let b=new Date(v+'T00:00:00'),t=new Date();
+if(b>t){r.textContent='Date cannot be in the future.';return}
+let y=t.getFullYear()-b.getFullYear(),m=t.getMonth()-b.getMonth(),d=t.getDate()-b.getDate();
+if(d<0){m--;d+=new Date(t.getFullYear(),t.getMonth(),0).getDate()}
+if(m<0){y--;m+=12}
+r.textContent=`Age: ${y} years, ${m} months, ${d} days`;
+}
+function count(){
+let v=document.getElementById('text').value;
+document.getElementById('countResult').textContent='Words: '+(v.trim()?v.trim().split(/\s+/).length:0)+' | Characters: '+v.length;
+}
+</script>
+</body>
+</html>
